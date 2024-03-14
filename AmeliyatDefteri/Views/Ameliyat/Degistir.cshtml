@@ -1,0 +1,154 @@
+@model AmeliyatChangeViewModel
+
+
+    <div class="container-fluid">
+        <div class="row">
+
+
+            <div class="col">
+
+                <div class="bg-white p-4">
+                    <h1>Ameliyat gir</h1>
+                    <br>
+                    <br>
+
+
+
+                    
+                    <form asp-controller="Ameliyat" asp-action="Degistir" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input type="hidden" asp-for="id">
+
+                        <div class="row align-items-end">
+
+                            <div class="col-md-3 mb-3">
+                                <label asp-for="Kullanici" class="form-label"></label>
+                                <input id="myTextbox" asp-for="Kullanici" class="form-control">
+                                <span asp-validation-for="Kullanici" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-3 mb-3">
+                                <label asp-for="Hasta_Name" class="form-label"></label>
+                                <input asp-for="Hasta_Name" class="form-control">
+                                <span asp-validation-for="Hasta_Name" class="text-danger"></span>
+                            </div>
+                            
+                            <div class="col-md-3 mb-3">
+                                <label asp-for="Telefon" class="form-label"></label>
+                                <input asp-for="Telefon" class="form-control">
+                                <span asp-validation-for="Telefon" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-3 mb-3">
+                                <label asp-for="Detay" class="form-label"></label>
+                                <input asp-for="Detay" class="form-control">
+                                <span asp-validation-for="Detay" class="text-danger"></span>
+                            </div>
+
+
+                            
+
+                            <div class="col-md-3 mb-3">
+                                Ameliyat Türü
+                                <select name="Ameliyat_Name" class="form-select">
+                                    @foreach (var ameliyat in ViewBag.AmeliyatListesi)
+                                    {
+                                    <option value="@ameliyat">@ameliyat</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="col-md-3 mb-3">
+                                Doktor İsmi
+                                <select name="Doktor_Name" class="form-select">
+                                    @foreach (var doktor in ViewBag.doktorListesi)
+                                    {
+                                    <option value="@doktor">@doktor</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="col-md-3 mb-3">
+                                Anestezi Türü
+                                <select name="Anestezi_Name" class="form-select">
+                                    @foreach (var anestezi in ViewBag.AnesteziListesi)
+                                    {
+                                    <option value="@anestezi">@anestezi</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="col-md-3 mb-3">
+                                Ameliyat Tarihi
+                                <select name="AmeliyatGünü" class="form-select">
+                                    @foreach (var zaman in ViewBag.hedefGunTarihleri)
+                                    {
+                                    <option value="@zaman">@zaman</option>
+                                    }
+                                </select>
+                            </div>
+
+
+
+                            <div id="sil" class="col-md-3 mb-3">
+                                <label asp-for="isDelete">Listeden Tamamen silmek için işaretleyiniz:</label>
+                                <input asp-for="isDelete" />
+                            </div>
+
+
+
+
+                            <div class="col-md-3 mb-3">
+                                <button id="myButton" type="submit" class="btn btn-primary">Değiştir</button>
+                            </div>
+                        </div>
+                    </form>
+                    <hr>
+                    
+                    <hr>
+                </div>
+            </div>
+
+            <style>
+                hr {
+                    border: 2px solid black;
+                    /* Çizginin kalınlığını ve rengini belirle */
+                    margin: 20px 5;
+                    /* İsteğe bağlı: çizginin etrafındaki boşluğu ayarla */
+                }
+            </style>
+
+
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+    $("#sil").click(function(){
+      alert("Seçtiğiniz hastayı silmek için onayladınız !!!");
+    });
+  });
+    </script>
+
+<script>
+    $(document).ready(function(){
+      // Butona tıklanınca kontrol fonksiyonunu çağır
+      $("#myButton").click(function(event){
+        kontrolEt(event);
+      });
+  
+      // Kontrol fonksiyonu
+      function kontrolEt(event){
+        // Textbox içeriğini al
+        var textboxIcerik = $("#myTextbox").val();
+  
+        // Textbox boşsa uyarı ver ve buton tıklamasını engelle
+        if(textboxIcerik === ""){
+          alert("Textbox boş! Lütfen bir şeyler yazın.");
+          event.preventDefault(); // Buton tıklamasını engelle
+        }
+  
+        // Diğer işlemleri buraya ekleyebilirsiniz
+        // Örneğin, form gönderme işlemi gibi
+      }
+    });
+  </script>

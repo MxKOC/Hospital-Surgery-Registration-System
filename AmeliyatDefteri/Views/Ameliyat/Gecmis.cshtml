@@ -1,0 +1,45 @@
+@model List<Gecmis>
+
+
+    <table class="table tabled-bordered mt-3">
+        <thead>
+            <tr>
+                <th>İşlemi Yapan</th>
+                <th>İşlem Türü</th>
+                <th>Yapıldığı Tarih</th>
+                <th>Hasta İsim</th>
+                <th>Hasta Telefon</th>
+                <th>Hasta Detay</th>
+                <th>Doktor İsim</th>
+                <th>Ameliyat Türü</th>
+                <th>Anestezi Türü</th>
+                <th>Tarih</th>
+
+
+
+
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach(var item in Model)
+            {
+            <tr>
+
+                <td>@item.Kullanici</td>
+                <td>@item.Olay</td>
+                <td>@item.IslemTarihi</td>
+                <td>@item.Name</td>
+                <td>@item.Telefon</td>
+                <td>@item.Detay</td>
+                <td>@item.Doktor</td>
+                <td>@item.Ameliyat</td>
+                <td>@item.Anestezi</td>
+                <td>@item.AmeliyatGünü</td>
+
+
+
+            </tr>
+            }
+        </tbody>
+    </table>

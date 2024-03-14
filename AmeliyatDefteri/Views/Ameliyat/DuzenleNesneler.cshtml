@@ -1,0 +1,142 @@
+@model DuzenleButunNesnelerViewModel
+
+
+
+
+<br><h2>Doktor Ekleme Ve Silme</h2><br>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            @using (Html.BeginForm("OlusturDoktor", "Ameliyat", FormMethod.Post, new { @class = "form" }))
+            {
+                <div class="form-group">
+                    <label for="Doktor_Name">Doktor İsmi</label>
+                    <input type="text" id="Doktor_Name" name="Doktor_Name" class="form-control" />
+                </div>
+                <button type="submit" class="btn btn-primary">Ekle</button>
+            }
+        </div>
+
+        <div class="col-md-6">
+            @using (Html.BeginForm("SilDoktor", "Ameliyat", FormMethod.Post, new { @class = "form" }))
+            {
+                <div class="form-group">
+                    <label for="Doktor_Name">Doktor İsmi</label>
+                    @Html.DropDownList("Doktor_Name", ViewBag.DoktorListesi as SelectList, new { @class = "form-control" })
+                </div>
+                <button type="submit" class="btn btn-danger">Sil</button>
+            }
+        </div>
+    </div>
+
+    <br><br><br>
+    <hr>
+   <h2>Ameliyat Ekleme Ve Silme</h2><br>
+
+    <div class="row">
+        <div class="col-md-6">
+            @using (Html.BeginForm("OlusturAmeliyat", "Ameliyat", FormMethod.Post, new { @class = "form" }))
+            {
+                <div class="form-group">
+                    <label for="Ameliyat_Name">Ameliyat İsmi</label>
+                    <input type="text" id="Ameliyat_Name" name="Ameliyat_Name" class="form-control" />
+                </div>
+                <button type="submit" class="btn btn-primary">Ekle</button>
+            }
+        </div>
+
+        <div class="col-md-6">
+            @using (Html.BeginForm("SilAmeliyat", "Ameliyat", FormMethod.Post, new { @class = "form" }))
+            {
+                <div class="form-group">
+                    <label for="Ameliyat_Name">Ameliyat İsmi</label>
+                    @Html.DropDownList("Ameliyat_Name", ViewBag.AmeliyatListesi as SelectList, new { @class = "form-control" })
+                </div>
+                <button type="submit" class="btn btn-danger">Sil</button>
+            }
+        </div>
+    </div>
+
+
+    <br><br><br>
+    <hr>
+   <h2>Anestezi Ekleme Ve Silme</h2><br>
+
+
+    <div class="row">
+        <div class="col-md-6">
+            @using (Html.BeginForm("OlusturAnestezi", "Ameliyat", FormMethod.Post, new { @class = "form" }))
+            {
+                <div class="form-group">
+                    <label for="Anestezi_Name">Anestezi İsmi</label>
+                    <input type="text" id="Anestezi_Name" name="Anestezi_Name" class="form-control" />
+                </div>
+                <button type="submit" class="btn btn-primary">Ekle</button>
+            }
+        </div>
+
+        <div class="col-md-6">
+            @using (Html.BeginForm("SilAnestezi", "Ameliyat", FormMethod.Post, new { @class = "form" }))
+            {
+                <div class="form-group">
+                    <label for="Anestezi_Name">Anestezi İsmi</label>
+                    @Html.DropDownList("Anestezi_Name", ViewBag.AnesteziListesi as SelectList, new { @class = "form-control" })
+                </div>
+                <button type="submit" class="btn btn-danger">Sil</button>
+            }
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+    <br><br><br>
+    <hr>
+   <h2>Ameliyat Günü Ekleme Ve Silme</h2><br>
+
+
+    <div class="row">
+        <div class="col-md-6">
+            @using (Html.BeginForm("EkleGun", "Ameliyat", FormMethod.Post, new { @class = "form" }))
+            {
+                <div class="form-group">
+                    <label for="Gun_Name">Gün</label>
+                    @Html.DropDownList("Gun_Name", ViewBag.ToplamGunlerTurkce as SelectList, new { @class = "form-control" })
+                </div>
+                <button type="submit" class="btn btn-danger">Ekle</button>
+            }
+        </div>
+
+        <div class="col-md-6">
+            @using (Html.BeginForm("SilGun", "Ameliyat", FormMethod.Post, new { @class = "form" }))
+            {
+                <div class="form-group">
+                    <label for="Gun_Name">Gün İsmi</label>
+                    @Html.DropDownList("Gun_Name", ViewBag.GunListesi as SelectList, new { @class = "form-control" })
+                </div>
+                <button type="submit" class="btn btn-danger">Sil</button>
+            }
+        </div>
+    </div>
+
+
+
+
+
+
+    <!-- Diğer formları benzer şekilde ekleyebilirsiniz -->
+
+</div>
+
+
+<style>
+    hr {
+        border: 2px solid black;
+        margin: 20px 5;
+    }
+</style>

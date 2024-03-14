@@ -1,0 +1,86 @@
+@model DuyuruViewModel
+
+
+    <h2>Duyuru Ekleme Ve Silme</h2><br>
+
+
+    <div class="row">
+        <br><br><hr><h2>Duyurular</h2><br>
+
+        <table class="table tabled-bordered mt-3">
+            <thead>
+                <tr>
+                    <th>Duyuru Başlangıç Tarihi</th>
+                    <th>Duyuru Bitiş Tarihi</th>
+
+                    <th>Duyuru</th>
+
+
+
+
+
+                </tr>
+            </thead>
+                        <tbody>
+
+                @foreach(var item in @ViewBag.DuyuruListesi2)
+                {
+                <tr>
+
+                    <td>-> @item.Baslangic</td>
+                    <td>-> @item.Bitis</td>
+                    <td>-> @item.Icerik</td>
+
+
+                </tr>
+                }
+            </tbody>
+        </table>
+
+<br><br><hr><h2>Duyuru Ekle</h2><br>
+
+        <div class="col-md-6">
+            @using (Html.BeginForm("Duyuru", "Ameliyat", FormMethod.Post, new { @class = "form" }))
+            {
+            
+
+                <div class="form-group">
+                    <label for="Baslangic">Duyuru Tarihi</label>
+                    <input type="date" name="Baslangic" class="form-control" >
+
+                </div>
+
+
+
+                <div class="form-group">
+                    <label for="Bitis">Ameliyat Tarihi</label>
+                    <input type="date" name="Bitis" class="form-control" >
+
+                </div>
+
+
+            
+
+                <div class="form-group">
+                    <label for="Icerik">Anestezi İsmi</label>
+                    <input type="text" id="Icerik" name="Icerik" class="form-control" />
+                </div>
+                <button type="submit" class="btn btn-danger">Oluştur</button>
+            } 
+            
+                <br><br><hr><h2>Duyuru Sil</h2><br>
+
+
+                @using (Html.BeginForm("SilDuyuru", "Ameliyat", FormMethod.Post, new { @class = "form" }))
+                {
+                    <div class="form-group">
+                        <label for="Icerik">Gün</label>
+                        @Html.DropDownList("Icerik", ViewBag.DuyuruListesi as SelectList, new { @class = "form-control" })
+                    </div>
+                    <button type="submit" class="btn btn-danger">Ekle</button>
+                }
+            
+        
+        
+    </div>
+    </div>

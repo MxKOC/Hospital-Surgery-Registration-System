@@ -1,0 +1,238 @@
+@model AmeliyatCreateViewModel
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+
+            <div class="bg-white p-4">
+
+
+
+                @{
+                var anesteziStr = @Model.AmeliyatGünü.ToString("dd.MM.yyyy HH:mm");
+                }
+
+
+                <h4>Bugünde yapılan işlemlerin Geçmiş Kayıtları İçin Tıklayınız...</h4>
+                <a href="/history/butun/sabit/@anesteziStr">str @anesteziStr</a>
+                <a class="nav-link text-dark" asp-area="" asp-controller="Ameliyat" asp-action="Gecmis"
+                    asp-route-anestezi="@Model.AmeliyatGünü">2. @Model.AmeliyatGünü</a>
+                @if(@ViewBag.GunlukAmeliyatlar!=null){
+                <table id="panel" class="table tabled-bordered mt-3">
+                    <thead>
+                        <tr>
+
+                            <th>Hasta İsim</th>
+                            <th>Hasta Telefon</th>
+                            <th>Hasta Detay</th>
+                            <th>Doktor İsim</th>
+                            <th>Ameliyat Türü</th>
+                            <th>Anestezi Türü</th>
+                            <th>Tarih</th>
+                            <th>Hastayı Düzenle</th>
+
+
+
+
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @foreach(var item in @ViewBag.GunlukAmeliyatlar)
+                        {
+                        <tr>
+
+                            <td>@item.Name</td>
+                            <td>@item.Telefon</td>
+                            <td>@item.Detay</td>
+                            <td>@item.Doktor.Name</td>
+                            <td>@item.Ameliyat.Name</td>
+                            <td>@item.Anestezi.Name</td>
+                            <td>@item.AmeliyatGünü</td>
+                            <th><a asp-controller="Ameliyat" asp-action="Degistir" asp-route-id="@item.Id"
+                                    class="btn btn-sm btn-primary " style="font-size: 12px;">Düzenle</a>
+                            </th>
+
+
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+
+
+
+
+
+
+                <table id="panel" class="table tabled-bordered mt-3">
+                    <thead>
+                        <tr>
+
+                            <th>Duyuru</th>
+
+
+
+
+
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @foreach(var item in @ViewBag.DuyuruListesi)
+                        {
+                        <tr>
+
+                            <td>-> @item</td>
+
+
+
+
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+
+
+
+
+
+                }
+
+
+                @if (!ViewBag.AllowedDays.Contains(Model.AmeliyatGünü.DayOfWeek))
+                {
+                <br>
+                <br><br>
+                <hr>
+                <h2>Dikkat!!!</h2>
+                <h5>Bugüne Ameliyat ekliyemezsiniz. <br>
+                    Yanlış tarih seçmiş olabilirsiniz. <br><br>
+                    Eğer haftanın bu gününe ameliyat
+                    eklemek isterseniz ameliyat günlerini güncelleyebilirsiniz</h5>
+                <a asp-controller="Ameliyat" asp-action="DuzenleNesneler" class="btn btn-sm btn-primary "
+                    style="font-size: 18px;">Ameliyat Günü Düzenle</a>
+                }
+                else
+                {
+
+                <div id="giris">
+                <h1>Ameliyat gir</h1>
+
+                <form asp-controller="Ameliyat" asp-action="EkleYeniAmeliyat" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="AmeliyatGünü">
+
+                    <div class="mb-3">
+                        <label id="myTextbox" asp-for="Kullanici" class="form-label"></label>
+                        <input asp-for="Kullanici" class="form-control">
+                        <span asp-validation-for="Kullanici" class="text-danger"></span>
+                    </div>
+
+
+                    <div class="mb-3">
+                        <label asp-for="Hasta_Name" class="form-label"></label>
+                        <input asp-for="Hasta_Name" class="form-control">
+                        <span asp-validation-for="Hasta_Name" class="text-danger"></span>
+                    </div>
+
+
+                    <div class="mb-3">
+                        <label asp-for="Telefon" class="form-label"></label>
+                        <input asp-for="Telefon" class="form-control">
+                        <span asp-validation-for="Telefon" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Detay" class="form-label"></label>
+                        <input asp-for="Detay" class="form-control">
+                        <span asp-validation-for="Detay" class="text-danger"></span>
+                    </div>
+
+
+                    <div class="mb-3">
+                        Doktor İsmi
+                        <select name="Doktor_Name">
+                            @foreach (var doktor in ViewBag.doktorListesi)
+                            {
+                            <option value="@doktor">@doktor</option>
+                            }
+                        </select>
+                    </div>
+
+
+                    <div class="mb-3">
+                        Ameliyat Türü
+                        <select name="Ameliyat_Name">
+                            @foreach (var ameliyat in ViewBag.AmeliyatListesi)
+                            {
+                            <option value="@ameliyat">@ameliyat</option>
+                            }
+                        </select>
+                    </div>
+
+
+
+
+                    <div class="mb-3">
+                        Anestezi Türü
+                        <select name="Anestezi_Name">
+                            @foreach (var anestezi in ViewBag.AnesteziListesi)
+                            {
+                            <option value="@anestezi">@anestezi</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+
+                        Ameliyat Tarihi -> @Model.AmeliyatGünü
+                    </div>
+
+
+                    <button id="myButton" type="submit" class="btn btn-primary">Oluştur</button>
+                </form>
+            </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        // Butona tıklanınca kontrol fonksiyonunu çağır
+        $("#myButton").click(function (event) {
+            kontrolEt(event);
+        });
+
+        // Kontrol fonksiyonu
+        function kontrolEt(event) {
+            // Textbox içeriğini al
+            var textboxIcerik = $("#myTextbox").val();
+
+            // Textbox boşsa uyarı ver ve buton tıklamasını engelle
+            if (textboxIcerik === "") {
+                alert("Textbox boş! Lütfen bir şeyler yazın.");
+                event.preventDefault(); // Buton tıklamasını engelle
+            }
+
+            // Diğer işlemleri buraya ekleyebilirsiniz
+            // Örneğin, form gönderme işlemi gibi
+        }
+    });
+</script>
+
+<style>
+#panel {
+background-color: rgb(250, 250, 250);
+border: solid 1px #000000;
+}
+
+#giris {
+    background-color: rgb(250, 250, 250);
+
+    border: solid 2px #302b2b;
+    padding: 15px;
+}
+</style>

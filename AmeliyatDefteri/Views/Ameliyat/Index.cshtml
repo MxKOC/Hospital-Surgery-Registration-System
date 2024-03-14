@@ -1,0 +1,255 @@
+@model IstatistikViewModel
+
+<div class="row">
+    <div class="col-12">
+
+        <h1>Genel Bilgi Sayfası</h1>
+        
+        <div id="flip">Tabloları Görüntülemek veya Gizlemek İçin tıklayınız</div>
+        <div id="panel">
+            <div style="overflow-x: auto;">
+            <table border="3"class="table table-bordered mt-6 table-primary table-striped">
+                <thead>
+                    <tr>
+                        <th>Ameliyatlar</th>
+                        @foreach(var item in @ViewBag.ZipListe2)
+                        {
+                        <th>@item.GunAdi @item.Tarih.ToShortDateString() </th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int k = 0; k < @ViewBag.ameliyatListesi.Count; k++) { <tr>
+                        <td>@ViewBag.ameliyatListesi[k]</td>
+                        @for (int l = 0; l < @ViewBag.ameliyatgunutopluliste.Count; l++) { <td>
+                            @ViewBag.ameliyatgunutopluliste[l][k]</td>
+                            }
+                            </tr>
+                            }
+                </tbody>
+            </table>
+
+
+
+
+
+
+
+
+            <table border="3" class="table tabled-bordered mt-6 table  table-dark table-striped">
+                <thead>
+                    <tr>
+                        <th>Doktorlar</th>
+                        @foreach(var item in @ViewBag.ZipListe2)
+                        {
+                        <th>@item.GunAdi @item.Tarih.ToShortDateString() </th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int k = 0; k < @ViewBag.doktorListesi.Count; k++) { <tr>
+                        <td>@ViewBag.doktorListesi[k]</td>
+                        @for (int l = 0; l < @ViewBag.doktorgunutopluliste.Count; l++) { <td>
+                            @ViewBag.doktorgunutopluliste[l][k]</td>
+                            }
+                            </tr>
+                            }
+                </tbody>
+            </table>
+
+
+
+
+
+            <table border="3" class="table tabled-bordered mt-6 table-info table-striped">
+                <thead>
+                    <tr>
+                        <th>Anestezi</th>
+                        @foreach(var item in @ViewBag.ZipListe2)
+                        {
+                        <th>@item.GunAdi @item.Tarih.ToShortDateString() </th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int k = 0; k < @ViewBag.AnesteziListesi.Count; k++) { <tr>
+                        <td>@ViewBag.AnesteziListesi[k]</td>
+                        @for (int l = 0; l < @ViewBag.doktoranestezigunutopluliste.Count; l++) { <td>
+                            @ViewBag.doktoranestezigunutopluliste[l][k]</td>
+                            }
+                            </tr>
+                            }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+        <br>
+        <hr>
+
+        <h4>Doktor ve Ameliyat Türü Sayıları</h4>
+        <br>
+
+        <div class="col-md-6">
+            @using (Html.BeginForm("BulDoktorAmeliyat", "Ameliyat", FormMethod.Post, new { @class = "form" }))
+            {
+            <div class="form-group">
+                <label id="Doktor_Name" for="Doktor_Name">Doktor İsmi</label>
+                @Html.DropDownList("Doktor_Name", ViewBag.DoktorListesi2 as SelectList, new { @class = "form-control" })
+            </div>
+
+
+            <div class="form-group">
+                <label id="Ameliyat_Name" for="Ameliyat_Name">Ameliyat Türü</label>
+                @Html.DropDownList("Ameliyat_Name", ViewBag.AmeliyatListesi2 as SelectList, new { @class =
+                "form-control" })
+            </div>
+            <button type="submit" class="btn btn-danger">Değerleri Getir</button>
+            }
+        </div>
+        <br>
+        @if( Model.IstatistikDokAmeliyatViewModel.Ameliyat_Name!=null){
+        <table class="table tabled-bordered mt-6 table-primary table-striped ">
+            <thead>
+                <tr>
+                    <th>Ameliyatlar</th>
+                    @foreach(var item in @ViewBag.ZipList)
+                    {
+                    <th>@item.GunAdi @item.Tarih.ToShortDateString() </th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+
+                <tr>
+                    <td>Toplam:</td>
+                    @for (int l = 0; l < @ViewBag.ameliyatgunuliste.Count; l++) { <td>@ViewBag.ameliyatgunuliste[l]</td>
+                        }
+                </tr>
+
+            </tbody>
+        </table>
+        }
+        <br><br>
+        <hr>
+        <h4>Doktor ve Anestezi Türü Sayıları</h4>
+        <br>
+        <div class="col-md-6">
+            @using (Html.BeginForm("BulDokAnestezi", "Ameliyat", FormMethod.Post, new { @class = "form" }))
+            {
+            <div class="form-group">
+                <label for="Doktor_Name">Doktor İsmi</label>
+                @Html.DropDownList("Doktor_Name", ViewBag.DoktorListesi2 as SelectList, new { @class = "form-control" })
+            </div>
+
+
+            <div class="form-group">
+                <label for="Anestezi_Name">Anestezi Türü</label>
+                @Html.DropDownList("Anestezi_Name", ViewBag.AnesteziListesi2 as SelectList, new { @class =
+                "form-control" })
+            </div>
+            <button type="submit" class="btn btn-danger">Değerleri Getir</button>
+            }
+        </div>
+        <br>
+        @if( Model.IstatistikDokAnesteziViewModel.Anestezi_Name!=null){
+        <table class="table tabled-bordered mt-6 table-primary table-striped ">
+            <thead>
+                <tr>
+                    <th>Ameliyatlar</th>
+                    @foreach(var item in @ViewBag.ZipList)
+                    {
+                    <th>@item.GunAdi @item.Tarih.ToShortDateString() </th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+
+                <tr>
+                    <td>Toplam:</td>
+                    @for (int l = 0; l < @ViewBag.ameliyatgunuliste.Count; l++) { <td>@ViewBag.ameliyatgunuliste[l]</td>
+                        }
+                </tr>
+
+            </tbody>
+        </table>
+        }
+
+
+        <br><br>
+        <hr>
+        <h4>Hasta Ameliyat Tarihleri</h4>
+        <br>
+
+        @using (Html.BeginForm("BulHasta", "Ameliyat", FormMethod.Post, new { @class = "form" }))
+        {
+        <div class="form-group">
+            <label for="Doktor_Name">Hasta İsmi</label>
+            <input type="text" id="Hasta_Name" name="Hasta_Name" class="form-control" />
+        </div>
+        <button type="submit" class="btn btn-primary">Hastayı Bul</button>
+        }
+        <br>
+        @if( Model.IstatistikHastaViewModel.Hasta_Name!=null){
+        <h6>@Model.IstatistikHastaViewModel.Hasta_Name Hastasının Kayıtlı Ameliyat Tarihleri :
+        </h6>
+        @foreach(var item in @ViewBag.hastatarih)
+        {
+        
+        <h9>--></h9> @item<br>
+        }
+        }
+
+        <br>
+        <hr>
+        <h3>İstediğiniz Tarihi Seçiniz</h3>
+        <h6>Ameliyat günleri belirlenmiş haftanın günleri seçilmelidir!</h6>
+
+        @using (Html.BeginForm("Index", "Ameliyat", FormMethod.Post, new { @class = "form" }))
+        {
+
+        <div class="row align-items-end">
+            <div class="col-md-3 mb-3">
+                <label for="time" class="form-label"></label>
+                <input type="date" name="time" class="form-control">
+            </div>
+
+            <div class="col-md-3 mb-3">
+                <button type="submit" class="btn btn-primary">Değiştir</button>
+            </div>
+        </div>
+        }
+
+
+
+
+
+
+    </div>
+</div>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+<script> 
+    $(document).ready(function(){
+      $("#flip").click(function(){
+        $("#panel").slideToggle("slow");
+      });
+    });
+    </script>
+
+
+<style> 
+    #panel, #flip {
+      padding: 5px;
+      text-align: center;
+      background-color: rgb(240, 240, 240);
+      border: solid 1px #000000;
+    }
+    
+    #panel {
+      padding: 30px;
+      display: none;
+    }
+    </style>

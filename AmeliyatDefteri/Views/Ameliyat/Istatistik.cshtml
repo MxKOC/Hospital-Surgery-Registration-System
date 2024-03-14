@@ -1,0 +1,107 @@
+@model IstatistikViewModel
+
+
+
+<div class="col-md-6">
+    @using (Html.BeginForm("BulDoktorAmeliyat", "Ameliyat", FormMethod.Post, new { @class = "form" }))
+    {
+        <div class="form-group">
+            <label for="Doktor_Name">Doktor İsmi</label>
+            @Html.DropDownList("Doktor_Name", ViewBag.DoktorListesi2 as SelectList, new { @class = "form-control" })
+        </div>
+
+
+        <div class="form-group">
+            <label for="Ameliyat_Name">Ameliyat Türü</label>
+            @Html.DropDownList("Ameliyat_Name", ViewBag.AmeliyatListesi2 as SelectList, new { @class = "form-control" })
+        </div>
+        <button type="submit" class="btn btn-danger">Değerleri Getir</button>
+    }
+</div>
+
+@if( Model.IstatistikDokAmeliyatViewModel.Doktor_Name!=null){
+               <table class="table tabled-bordered mt-6 table-primary table-striped ">
+                <thead>
+                    <tr>
+                        <th>Ameliyatlar</th>
+                        @foreach(var item in @ViewBag.ZipList)
+                        {
+                        <th>@item.GunAdi @item.Tarih.ToShortDateString() </th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    <tr>
+                        <td>Toplam:</td>
+                     @for (int l = 0; l < @ViewBag.ameliyatgunuliste.Count; l++) { 
+                        <td>@ViewBag.ameliyatgunuliste[l]</td>
+                         }
+                         </tr>
+                            
+                </tbody>
+            </table>
+}
+
+
+<div class="col-md-6">
+    @using (Html.BeginForm("BulDokAnestezi", "Ameliyat", FormMethod.Post, new { @class = "form" }))
+    {
+        <div class="form-group">
+            <label for="Doktor_Name">Doktor İsmi</label>
+            @Html.DropDownList("Doktor_Name", ViewBag.DoktorListesi2 as SelectList, new { @class = "form-control" })
+        </div>
+
+
+        <div class="form-group">
+            <label for="Anestezi_came">Anestezi Türü</label>
+            @Html.DropDownList("Anestezi_Name", ViewBag.AnesteziListesi2 as SelectList, new { @class = "form-control" })
+        </div>
+        <button type="submit" class="btn btn-danger">Değerleri Getir</button>
+    }
+</div>
+
+@if( Model.IstatistikDokAnesteziViewModel.Anestezi_Name!=null){
+    <table class="table tabled-bordered mt-6 table-primary table-striped ">
+     <thead>
+         <tr>
+             <th>Ameliyatlar</th>
+             @foreach(var item in @ViewBag.ZipList)
+             {
+             <th>@item.GunAdi @item.Tarih.ToShortDateString() </th>
+             }
+         </tr>
+     </thead>
+     <tbody>
+         
+             <tr>
+                <td>Toplam:</td>
+             @for (int l = 0; l < @ViewBag.ameliyatgunuliste.Count; l++) { 
+                <td>@ViewBag.ameliyatgunuliste[l]</td>
+                 }
+                 </tr>
+                 
+     </tbody>
+ </table>
+}
+
+
+
+
+@using (Html.BeginForm("BulHasta", "Ameliyat", FormMethod.Post, new { @class = "form" }))
+{
+    <div class="form-group">
+        <label for="Doktor_Name">Hasta İsmi</label>
+        <input type="text" id="Hasta_Name" name="Hasta_Name" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Hastayı Bul</button>
+}
+
+@if( Model.IstatistikHastaViewModel.Hasta_Name!=null){
+<h9>Hastanın Ameliyat Tarihleri:</h9>
+@foreach(var item in @ViewBag.hastatarih)
+             {
+                <br>
+@item
+}
+}
