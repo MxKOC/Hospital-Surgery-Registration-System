@@ -1,0 +1,2 @@
+Gerçek hayat problemi üzerine geliştirdiğim hastanelerdeki bölümlerde asistanların kendi içlerinde tuttuğu ameliyat defterinin yerini alabilecek kapsamlı bir sistem projesi.
+Tanıdığım bir doktor vasıtasıyla bizzat oluşabilecek hatalara sorunlar getirerek uzun süre boyunca sıkıntı çekilmeden gerekebilecek tüm ekleme ve çıkarma eklentileriyle beraber bir doktorun kullanbileceği kolaylığa indiilmiştir ve kapsamlı hazırlanmıştır.
