@@ -1,5 +1,6 @@
 using System.Globalization;
 using AmeliyatDefteri.Entity;
+using AmeliyatDefteri.Services;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -8,6 +9,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddScoped<IStatisticsService, StatisticsService>();
+
+builder.Services.AddTransient<IEmailSender, EmailSender>();
 
 builder.Services.AddDbContext<DataContext>(options => {
     var config = builder.Configuration;

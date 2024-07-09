@@ -1,5 +1,6 @@
 @model IstatistikViewModel
 
+
 <div class="row">
     <div class="col-12">
 
@@ -8,15 +9,25 @@
         <div id="flip">Tabloları Görüntülemek veya Gizlemek İçin tıklayınız</div>
         <div id="panel">
             <div style="overflow-x: auto;">
-            <table border="3"class="table table-bordered mt-6 table-primary table-striped">
+            <table id="my-table"  border="3"class="table table-bordered mt-6 table-primary table-striped">
                 <thead>
                     <tr>
                         <th>Ameliyatlar</th>
+                        @{
+
+                        }
+
                         @foreach(var item in @ViewBag.ZipListe2)
                         {
-                        <th>@item.GunAdi @item.Tarih.ToShortDateString() </th>
+                            int day = @item.Tarih.Day;
+                            int month = @item.Tarih.Month;
+                            int year = @item.Tarih.Year;
+                            string formattedDate = $"{year}-{month:D2}-{day:D2}T00:00:00";
+                            <th><button class="btn  btnInsert" type="button" data-url="@Url.Action("CreateModal", "Ameliyat" , new { Azaman =  @item.Tarih })" data-tarih="@item.Tarih.ToShortDateString()">@item.GunAdi @item.Tarih.ToShortDateString()</button>
+                            </th>
                         }
                     </tr>
+                    
                 </thead>
                 <tbody>
                     @for (int k = 0; k < @ViewBag.ameliyatListesi.Count; k++) { <tr>
@@ -36,13 +47,19 @@
 
 
 
-            <table border="3" class="table tabled-bordered mt-6 table  table-dark table-striped">
+            <table border="3" class="table tabled-bordered mt-6 table  table-primary table-striped">
                 <thead>
                     <tr>
                         <th>Doktorlar</th>
                         @foreach(var item in @ViewBag.ZipListe2)
                         {
-                        <th>@item.GunAdi @item.Tarih.ToShortDateString() </th>
+                            int day = @item.Tarih.Day;
+                            int month = @item.Tarih.Month;
+                            int year = @item.Tarih.Year;
+                            string formattedDate = $"{year}-{month:D2}-{day:D2}T00:00:00";
+                            <th><button class="btn  btnInsert" type="button" data-url="@Url.Action("CreateModal", "Ameliyat" , new { Azaman =  @item.Tarih })" data-tarih="@item.Tarih.ToShortDateString()">@item.GunAdi @item.Tarih.ToShortDateString()</button>
+                               
+                            </th>
                         }
                     </tr>
                 </thead>
@@ -67,7 +84,13 @@
                         <th>Anestezi</th>
                         @foreach(var item in @ViewBag.ZipListe2)
                         {
-                        <th>@item.GunAdi @item.Tarih.ToShortDateString() </th>
+                            int day = @item.Tarih.Day;
+                            int month = @item.Tarih.Month;
+                            int year = @item.Tarih.Year;
+                            string formattedDate = $"{year}-{month:D2}-{day:D2}T00:00:00";
+                            <th><button class="btn  btnInsert" type="button" data-url="@Url.Action("CreateModal", "Ameliyat" , new { Azaman =  @item.Tarih })" data-tarih="@item.Tarih.ToShortDateString()">@item.GunAdi @item.Tarih.ToShortDateString()</button>
+                               
+                            </th>
                         }
                     </tr>
                 </thead>
@@ -92,89 +115,74 @@
         <br>
 
         <div class="col-md-6">
-            @using (Html.BeginForm("BulDoktorAmeliyat", "Ameliyat", FormMethod.Post, new { @class = "form" }))
-            {
+            
             <div class="form-group">
                 <label id="Doktor_Name" for="Doktor_Name">Doktor İsmi</label>
-                @Html.DropDownList("Doktor_Name", ViewBag.DoktorListesi2 as SelectList, new { @class = "form-control" })
+                @Html.DropDownList("Doktor_Name", ViewBag.DoktorListesi2 as SelectList, new { id = "DoktorDropDown", @class = "form-control" })
             </div>
 
 
             <div class="form-group">
                 <label id="Ameliyat_Name" for="Ameliyat_Name">Ameliyat Türü</label>
-                @Html.DropDownList("Ameliyat_Name", ViewBag.AmeliyatListesi2 as SelectList, new { @class =
-                "form-control" })
+                @Html.DropDownList("Ameliyat_Name", ViewBag.AmeliyatListesi2 as SelectList, new { id = "AmeliyatDropDown", @class ="form-control" })
             </div>
-            <button type="submit" class="btn btn-danger">Değerleri Getir</button>
-            }
+            <button id="Ameliyatliste" type="button" class="btn btn-danger">Değerleri Getir</button>
+            
         </div>
         <br>
-        @if( Model.IstatistikDokAmeliyatViewModel.Ameliyat_Name!=null){
-        <table class="table tabled-bordered mt-6 table-primary table-striped ">
+
+        <div style="overflow-x: auto;">
+        <table style="display: none;" id="tableAmeliyat" class="table table-bordered mt-6 table-primary table-striped">
             <thead>
-                <tr>
+                <tr id="AmeliyattableHeader">
                     <th>Ameliyatlar</th>
-                    @foreach(var item in @ViewBag.ZipList)
-                    {
-                    <th>@item.GunAdi @item.Tarih.ToShortDateString() </th>
-                    }
+                    <!-- Headers will be dynamically inserted here -->
                 </tr>
             </thead>
             <tbody>
-
-                <tr>
+                <tr id="AmeliyattableRow">
                     <td>Toplam:</td>
-                    @for (int l = 0; l < @ViewBag.ameliyatgunuliste.Count; l++) { <td>@ViewBag.ameliyatgunuliste[l]</td>
-                        }
+                    <!-- Rows will be dynamically inserted here -->
                 </tr>
-
             </tbody>
         </table>
-        }
-        <br><br>
-        <hr>
+    </div>
+
+
+
+
         <h4>Doktor ve Anestezi Türü Sayıları</h4>
         <br>
         <div class="col-md-6">
-            @using (Html.BeginForm("BulDokAnestezi", "Ameliyat", FormMethod.Post, new { @class = "form" }))
-            {
             <div class="form-group">
-                <label for="Doktor_Name">Doktor İsmi</label>
-                @Html.DropDownList("Doktor_Name", ViewBag.DoktorListesi2 as SelectList, new { @class = "form-control" })
+                <label id = "" for="Doktor_Name">Doktor İsmi</label>
+                @Html.DropDownList("Doktor_Name", ViewBag.DoktorListesi2 as SelectList, new {id = "DoktorDropDown2", @class = "form-control" })
             </div>
 
 
             <div class="form-group">
                 <label for="Anestezi_Name">Anestezi Türü</label>
-                @Html.DropDownList("Anestezi_Name", ViewBag.AnesteziListesi2 as SelectList, new { @class =
-                "form-control" })
+                @Html.DropDownList("Anestezi_Name", ViewBag.AnesteziListesi2 as SelectList, new {id = "AnesteziDropDown", @class ="form-control" })
             </div>
-            <button type="submit" class="btn btn-danger">Değerleri Getir</button>
-            }
+            <button id="Anesteziliste" type="submit" class="btn btn-danger">Değerleri Getir</button>
         </div>
         <br>
-        @if( Model.IstatistikDokAnesteziViewModel.Anestezi_Name!=null){
-        <table class="table tabled-bordered mt-6 table-primary table-striped ">
-            <thead>
-                <tr>
-                    <th>Ameliyatlar</th>
-                    @foreach(var item in @ViewBag.ZipList)
-                    {
-                    <th>@item.GunAdi @item.Tarih.ToShortDateString() </th>
-                    }
-                </tr>
-            </thead>
-            <tbody>
-
-                <tr>
-                    <td>Toplam:</td>
-                    @for (int l = 0; l < @ViewBag.ameliyatgunuliste.Count; l++) { <td>@ViewBag.ameliyatgunuliste[l]</td>
-                        }
-                </tr>
-
-            </tbody>
-        </table>
-        }
+        <div style="overflow-x: auto;">
+            <table style="display: none;" id="tableAnestezi" class="table table-bordered mt-6 table-primary table-striped">
+                <thead>
+                    <tr id="AnestezitableHeader">
+                        <th>Ameliyatlar</th>
+                        <!-- Headers will be dynamically inserted here -->
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr id="AnestezitableRow">
+                        <td>Toplam:</td>
+                        <!-- Rows will be dynamically inserted here -->
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
 
         <br><br>
@@ -188,7 +196,7 @@
             <label for="Doktor_Name">Hasta İsmi</label>
             <input type="text" id="Hasta_Name" name="Hasta_Name" class="form-control" />
         </div>
-        <button type="submit" class="btn btn-primary">Hastayı Bul</button>
+        <button id="buton1" type="submit" class="btn btn-primary">Hastayı Bul</button>
         }
         <br>
         @if( Model.IstatistikHastaViewModel.Hasta_Name!=null){
@@ -223,12 +231,60 @@
 
 
 
+        <div id="myDiv" style="display: none;"></div>
 
+
+        <div id="modal-view"></div>
+
+
+
+
+
+        
+
+
+<div id="denemepdf">asdasd</div>
 
 
     </div>
 </div>
 
+
+
+
+
+<button onclick="exportToPDF()">Export to PDF</button>
+
+
+
+        
+@section Scripts {
+    <script>
+
+$(".btnInsert").click(function (e) {
+
+var url = $(this).data('url');
+var tarih = $(this).data('tarih'); // Get the value of data-tarih attribute
+$("#myDiv").text(tarih);
+var modal = $("#modal-view");
+
+$.get(url).done(function (data) {
+modal.html(data);
+// Display the value of data-tarih in the modal
+
+modal.find('.modal-body').append('<p>Ameliyat Günü: ' + tarih + '</p>');
+
+modal.find('.modal').modal('show');
+});
+});
+    </script>
+
+}
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js" ></script>
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 
 <script> 
@@ -237,6 +293,81 @@
         $("#panel").slideToggle("slow");
       });
     });
+
+
+    function exportToPDF() {
+        var element = document.getElementById('my-table').textContent;
+        console.log(document.getElementById('my-table').textContent)
+        html2pdf(element);
+    }
+
+
+
+    $(document).ready(function () {
+    $("#Ameliyatliste").click(function () {
+        sendData("/Ameliyat/Index", "#DoktorDropDown", "#AmeliyatDropDown", "Ameliyat_Name", AmeliyatupdateTable);
+    });
+
+    $("#Anesteziliste").click(function () {
+        sendData("/Ameliyat/Index", "#DoktorDropDown2", "#AnesteziDropDown", "Anestezi_Name", AnesteziupdateTable);
+    });
+
+    function sendData(url, doktorDropDownSelector, operationDropDownSelector, operationFieldName, updateTableCallback) {
+        var data = {
+            Doktor_Name: $(doktorDropDownSelector + " option:selected").text()
+        };
+        data[operationFieldName] = $(operationDropDownSelector + " option:selected").text();
+        
+        console.log(data);
+
+        $.ajax({
+            url: url,
+            type: "GET",
+            data: data,
+            success: function (result) {
+                console.log(result); // Log the entire result object
+                if (result.zipList && result.ameliyatgunuliste) {
+                    updateTableCallback(result.zipList, result.ameliyatgunuliste);
+                } else {
+                    console.error("Invalid response structure:", result);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error(xhr.responseText); // Log error to console
+            }
+        });
+    }
+
+    function updateTable(tableHeaderSelector, tableRowSelector, zipList, ameliyatgunuliste, tableTitle) {
+        // Clear existing table headers and rows
+        $(tableHeaderSelector).empty();
+        $(tableRowSelector).empty();
+
+        // Add table headers
+        $(tableHeaderSelector).append("<th>" + tableTitle + "</th>");
+        zipList.forEach(function (item) {
+            $(tableHeaderSelector).append("<th>" + item.gunAdi + " " + new Date(item.tarih).toLocaleDateString() + "</th>");
+        });
+
+        // Add table rows
+        $(tableRowSelector).append("<td>Toplam:</td>");
+        ameliyatgunuliste.forEach(function (count) {
+            $(tableRowSelector).append("<td>" + count + "</td>");
+        });
+        $(tableHeaderSelector).closest("table").show();
+    }
+
+    function AmeliyatupdateTable(zipList, ameliyatgunuliste) {
+        updateTable("#AmeliyattableHeader", "#AmeliyattableRow", zipList, ameliyatgunuliste, "Ameliyatlar");
+    }
+
+    function AnesteziupdateTable(zipList, ameliyatgunuliste) {
+        updateTable("#AnestezitableHeader", "#AnestezitableRow", zipList, ameliyatgunuliste, "Anesteziler");
+    }
+});
+
+
+
     </script>
 
 

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "M4VYdZ1Ds+dbR5B/W3rpJwwx6XoMvzlPvHVnWjwPm0Y088glh+nNBq7oKMXZ76L7dvocKkB/jOi9IlNlW7G7Zw==",
+  "dgSpecHash": "tIiAPcZbLo4DcJIloJFhkLJz/LnNIvo/x6KUZPDEbMZm1Ny67erx4djM9nIflRFD11ydJi/F4tjXgLZ6c0jzPA==",
   "success": true,
-  "projectFilePath": "D:\\MK\\VSCode asp.net\\Abim Proje Mvc - Kopya\\AmeliyatDefteri\\AmeliyatDefteri.csproj",
+  "projectFilePath": "D:\\MK\\VSCode asp.net\\js deneme\\Ameliyat deftei Core - Kopya\\Hospital Surgery Registration System\\AmeliyatDefteri\\AmeliyatDefteri.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Mkoc\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\Mkoc\\.nuget\\packages\\microsoft.data.sqlite.core\\7.0.8\\microsoft.data.sqlite.core.7.0.8.nupkg.sha512",
@@ -24,6 +24,7 @@
     "C:\\Users\\Mkoc\\.nuget\\packages\\microsoft.extensions.options\\7.0.0\\microsoft.extensions.options.7.0.0.nupkg.sha512",
     "C:\\Users\\Mkoc\\.nuget\\packages\\microsoft.extensions.primitives\\7.0.0\\microsoft.extensions.primitives.7.0.0.nupkg.sha512",
     "C:\\Users\\Mkoc\\.nuget\\packages\\mono.texttemplating\\2.2.1\\mono.texttemplating.2.2.1.nupkg.sha512",
+    "C:\\Users\\Mkoc\\.nuget\\packages\\questpdf\\2024.6.4\\questpdf.2024.6.4.nupkg.sha512",
     "C:\\Users\\Mkoc\\.nuget\\packages\\sqlitepclraw.bundle_e_sqlite3\\2.1.4\\sqlitepclraw.bundle_e_sqlite3.2.1.4.nupkg.sha512",
     "C:\\Users\\Mkoc\\.nuget\\packages\\sqlitepclraw.core\\2.1.4\\sqlitepclraw.core.2.1.4.nupkg.sha512",
     "C:\\Users\\Mkoc\\.nuget\\packages\\sqlitepclraw.lib.e_sqlite3\\2.1.4\\sqlitepclraw.lib.e_sqlite3.2.1.4.nupkg.sha512",
@@ -31,7 +32,11 @@
     "C:\\Users\\Mkoc\\.nuget\\packages\\system.codedom\\4.4.0\\system.codedom.4.4.0.nupkg.sha512",
     "C:\\Users\\Mkoc\\.nuget\\packages\\system.memory\\4.5.3\\system.memory.4.5.3.nupkg.sha512",
     "C:\\Users\\Mkoc\\.nuget\\packages\\system.text.encodings.web\\7.0.0\\system.text.encodings.web.7.0.0.nupkg.sha512",
-    "C:\\Users\\Mkoc\\.nuget\\packages\\system.text.json\\7.0.0\\system.text.json.7.0.0.nupkg.sha512"
+    "C:\\Users\\Mkoc\\.nuget\\packages\\system.text.json\\7.0.0\\system.text.json.7.0.0.nupkg.sha512",
+    "C:\\Users\\Mkoc\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\7.0.14\\microsoft.aspnetcore.app.ref.7.0.14.nupkg.sha512",
+    "C:\\Users\\Mkoc\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\7.0.14\\microsoft.netcore.app.host.win-x64.7.0.14.nupkg.sha512",
+    "C:\\Users\\Mkoc\\.nuget\\packages\\microsoft.netcore.app.ref\\7.0.14\\microsoft.netcore.app.ref.7.0.14.nupkg.sha512",
+    "C:\\Users\\Mkoc\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\7.0.14\\microsoft.windowsdesktop.app.ref.7.0.14.nupkg.sha512"
   ],
   "logs": []
 }

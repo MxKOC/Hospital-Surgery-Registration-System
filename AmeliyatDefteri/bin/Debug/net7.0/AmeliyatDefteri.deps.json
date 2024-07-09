@@ -9,7 +9,8 @@
       "AmeliyatDefteri/1.0.0": {
         "dependencies": {
           "Microsoft.EntityFrameworkCore.Design": "7.0.8",
-          "Microsoft.EntityFrameworkCore.Sqlite": "7.0.8"
+          "Microsoft.EntityFrameworkCore.Sqlite": "7.0.8",
+          "QuestPDF": "2024.6.4"
         },
         "runtime": {
           "AmeliyatDefteri.dll": {}
@@ -164,6 +165,51 @@
           "lib/netstandard2.0/Mono.TextTemplating.dll": {
             "assemblyVersion": "2.2.0.0",
             "fileVersion": "2.2.1.1"
+          }
+        }
+      },
+      "QuestPDF/2024.6.4": {
+        "runtime": {
+          "lib/net6.0/QuestPDF.dll": {
+            "assemblyVersion": "2024.6.4.0",
+            "fileVersion": "2024.6.4.0"
+          }
+        },
+        "runtimeTargets": {
+          "runtimes/linux-arm64/native/libQuestPdfSkia.so": {
+            "rid": "linux-arm64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/linux-musl-x64/native/libQuestPdfSkia.so": {
+            "rid": "linux-musl-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/linux-x64/native/libQuestPdfSkia.so": {
+            "rid": "linux-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/osx-arm64/native/libQuestPdfSkia.dylib": {
+            "rid": "osx-arm64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/osx-x64/native/libQuestPdfSkia.dylib": {
+            "rid": "osx-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win-x64/native/QuestPdfSkia.dll": {
+            "rid": "win-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win-x86/native/QuestPdfSkia.dll": {
+            "rid": "win-x86",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
           }
         }
       },
@@ -482,6 +528,13 @@
       "sha512": "sha512-KZYeKBET/2Z0gY1WlTAK7+RHTl7GSbtvTLDXEZZojUdAPqpQNDL6tHv7VUpqfX5VEOh+uRGKaZXkuD253nEOBQ==",
       "path": "mono.texttemplating/2.2.1",
       "hashPath": "mono.texttemplating.2.2.1.nupkg.sha512"
+    },
+    "QuestPDF/2024.6.4": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-Y+4+WCcRgaWNm0EaJyWPcIm4j91s1aDbQxDumEnFRb9HWpx/wieQh/sl06HJHP1+NniAhp7lp8gToRquCIAuOA==",
+      "path": "questpdf/2024.6.4",
+      "hashPath": "questpdf.2024.6.4.nupkg.sha512"
     },
     "SQLitePCLRaw.bundle_e_sqlite3/2.1.4": {
       "type": "package",

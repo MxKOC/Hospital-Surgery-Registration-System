@@ -8,14 +8,13 @@
 <div class="container">
     <div class="row">
         <div class="col-md-6">
-            @using (Html.BeginForm("OlusturDoktor", "Ameliyat", FormMethod.Post, new { @class = "form" }))
-            {
+
                 <div class="form-group">
                     <label for="Doktor_Name">Doktor İsmi</label>
-                    <input type="text" id="Doktor_Name" name="Doktor_Name" class="form-control" />
+                    <input type="text" id="DoktorNamenew" name="Doktor_Name" class="form-control" />
                 </div>
-                <button type="submit" class="btn btn-primary">Ekle</button>
-            }
+                <button id="btnnewdr" type="button" class="btn btn-primary">Ekle</button>
+            
         </div>
 
         <div class="col-md-6">
@@ -132,6 +131,40 @@
     <!-- Diğer formları benzer şekilde ekleyebilirsiniz -->
 
 </div>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+
+<script>
+
+$(document).ready(function () {
+    $("#btnnewdr").click(function () {
+        ekle();
+    });
+
+    function ekle() {
+        var formData = {
+            Doktor_Name: $("#DoktorNamenew").val()
+        };
+
+        $.ajax({
+            url: "/Ameliyat/OlusturDoktor", // Controller metodu
+            type: "POST",
+            data: formData,
+            success: function (result) {
+                // Sunucudan dönen cevaba göre gereken işlemleri yap
+                // Örneğin, dönen cevabı uygun bir alana ekleyebilirsiniz
+                console.log(result); // Dönen cevap
+            },
+            error: function (xhr, status, error) {
+                console.error(xhr.responseText); // Hata durumunda hatayı konsola yazdır
+            }
+        });
+    }
+});
+
+</script>
+
 
 
 <style>

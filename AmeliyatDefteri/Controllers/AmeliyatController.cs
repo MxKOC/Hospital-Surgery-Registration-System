@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AmeliyatDefteri.Entity;
 using AmeliyatDefteri.Models;
+using AmeliyatDefteri.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -19,12 +20,31 @@ namespace AmeliyatDefteri.Controllers
     public class AmeliyatController : Controller
     {
 
+        private readonly IStatisticsService _statisticsService;
         private readonly DataContext _context;
+        private readonly IEmailSender _emailSender;
 
-        public AmeliyatController(DataContext context)
+        public AmeliyatController(DataContext context, IStatisticsService statisticsService, IEmailSender emailSender)
         {
             _context = context;
+            _statisticsService = statisticsService;
+            _emailSender = emailSender;
+
         }
+
+
+
+
+        [HttpGet]
+        public async Task<IActionResult> IndirPdf()
+        {
+            var generator = new PdfGenerator();
+            generator.GeneratePdf();
+            return Ok("PDF başarıyla oluşturuldu.");
+        }
+
+
+
 
         [HttpGet]
         public IActionResult Index(IstatistikDokAmeliyatViewModel model1, IstatistikDokAnesteziViewModel model2, IstatistikHastaViewModel model3)
@@ -32,117 +52,30 @@ namespace AmeliyatDefteri.Controllers
 
             var Sonuçlar = _context.Zamanlar.Include(x => x.Ameliyat).Include(x => x.Doktor).ToList();
 
-
+            var gunler = _statisticsService.GetAllowedDays();
             var Baslangiczaman = DateTime.Today;
-            var AnlikZaman = DateTime.Today;
-            List<string> hedefGunIsimleri = new List<string>();
-            List<DateTime> hedefGunTarihleri = new List<DateTime>();
+            var hedefGunTarihleri = _statisticsService.GetHedefGunTarihleri(gunler, Baslangiczaman, 360);
+            var zipList = hedefGunTarihleri.Select(date => new { GunAdi = date.DayOfWeek.ToString(), Tarih = date }).ToList();
 
-            var gunler = _context.AmeliyatGunleri.Select(x => x.Gun).ToList();
-
-
-
-            //List<string> allowedDays = new List<string> { "Salı", "Perşembe" };
             ViewBag.AllowedDays = gunler;
-            for (int i = 0; i < 360; i++)
-            {
-                DateTime gunTarihi = AnlikZaman.AddDays(i);
-
-
-                if (gunler.Contains(gunTarihi.DayOfWeek))
-                {
-
-                    hedefGunIsimleri.Add(gunTarihi.DayOfWeek.ToString());
-                    hedefGunTarihleri.Add(gunTarihi);
-                }
-            }
-
-            var zipList = hedefGunIsimleri.Zip(hedefGunTarihleri, (gun, tarih) => new { GunAdi = gun, Tarih = tarih });
             ViewBag.ZipListe2 = zipList;
-            var ameliyatListesi = _context.Ameliyatlar.Select(x => x.Name).ToList();
-            ViewBag.ameliyatListesi = ameliyatListesi;
-            var doktorListesi = _context.Doktorlar.Select(x => x.Name).ToList();
-            ViewBag.doktorListesi = doktorListesi;
-            var AnesteziListesi = _context.Anesteziler.Select(x => x.Name).ToList();
-            ViewBag.AnesteziListesi = AnesteziListesi;
 
+            ViewBag.ameliyatListesi = _statisticsService.GetAmeliyatList();
+            ViewBag.doktorListesi = _statisticsService.GetDoktorList();
+            ViewBag.AnesteziListesi = _statisticsService.GetAnesteziList();
 
-
-            var ameliyatListesiIdler = _context.Ameliyatlar.Select(x => x.Id).ToList();
-
-
-            List<List<int>> ameliyatgunutopluliste = new List<List<int>>();
-            foreach (var gun in hedefGunTarihleri)
-            {
-                List<int> ameliyatgunuliste = new List<int>();
-                foreach (var item in ameliyatListesiIdler)
-                {
-                    int count = Sonuçlar.Where(x => x.AmeliyatId == item && x.AmeliyatGünü == x.AmeliyatGünü && x.AmeliyatGünü == gun).Count();
-                    ameliyatgunuliste.Add(count);
-                }
-                Console.WriteLine(ameliyatgunuliste);
-                ameliyatgunutopluliste.Add(ameliyatgunuliste);
-            }
-            ViewBag.ameliyatgunutopluliste = ameliyatgunutopluliste;
-
-
-
-
-            var DoktorListesiIdler = _context.Doktorlar.Select(x => x.Id).ToList();
-
-
-            List<List<int>> doktorgunutopluliste = new List<List<int>>();
-            foreach (var gun in hedefGunTarihleri)
-            {
-                List<int> doktortgunuliste = new List<int>();
-                foreach (var item in DoktorListesiIdler)
-                {
-                    int count = Sonuçlar.Where(x => x.DoktorId == item && x.AmeliyatGünü == x.AmeliyatGünü && x.AmeliyatGünü == gun).Count();
-                    doktortgunuliste.Add(count);
-                }
-                Console.WriteLine(doktortgunuliste);
-                doktorgunutopluliste.Add(doktortgunuliste);
-            }
-            ViewBag.doktorgunutopluliste = doktorgunutopluliste;
+            ViewBag.ameliyatgunutopluliste = _statisticsService.GetAmeliyatGunTopluListe(hedefGunTarihleri, _context.Ameliyatlar.Select(x => x.Id).ToList());
+            ViewBag.doktorgunutopluliste = _statisticsService.GetDoktorGunTopluListe(hedefGunTarihleri, _context.Doktorlar.Select(x => x.Id).ToList());
+            ViewBag.doktoranestezigunutopluliste = _statisticsService.GetDoktorAnesteziGunTopluListe(hedefGunTarihleri, _context.Anesteziler.Select(x => x.Id).ToList());
 
 
 
 
 
-            var anesteziListesibilgiler = _context.Anesteziler.Select(x => x.Id).ToList();
 
+            /////////////////////////////////
+            ///                                                             İstatistik
 
-            List<List<int>> doktoranestezigunutopluliste = new List<List<int>>();
-            foreach (var gun in hedefGunTarihleri)
-            {
-                List<int> doktortanestezigunuliste = new List<int>();
-                foreach (var item in anesteziListesibilgiler)
-                {
-                    int count = Sonuçlar.Where(x => x.AnesteziId == item && x.AmeliyatGünü == x.AmeliyatGünü && x.AmeliyatGünü == gun).Count();
-                    doktortanestezigunuliste.Add(count);
-                }
-                Console.WriteLine(doktortanestezigunuliste);
-                doktoranestezigunutopluliste.Add(doktortanestezigunuliste);
-            }
-            ViewBag.doktoranestezigunutopluliste = doktoranestezigunutopluliste;
-
-
-
-
-            ViewBag.hedefGunTarihleri = hedefGunTarihleri;
-            var defaultDateTime = hedefGunTarihleri[0];
-            ViewBag.DefaultDateTime = defaultDateTime.ToString("yyyy-MM-ddTHH:mm");
-
-
-
-
-/////////////////////////////////
-
-/////////////////////////////////
-///                                                             İstatistik
-/////////////////////////////////
-
-/////////////////////////////////
 
 
 
@@ -150,165 +83,56 @@ namespace AmeliyatDefteri.Controllers
 
             if (model1.Ameliyat_Name != null)
             {
-                Sonuçlar = _context.Zamanlar.Include(x => x.Ameliyat).Include(x => x.Doktor).ToList();
 
 
-                Baslangiczaman = DateTime.Today;
-                AnlikZaman = DateTime.Today;
-                hedefGunIsimleri = new List<string>();
-                hedefGunTarihleri = new List<DateTime>();
+                var hedefGunTarihleri30 = _statisticsService.GetHedefGunTarihleri(gunler, Baslangiczaman, 360);
 
-                gunler = _context.AmeliyatGunleri.Select(x => x.Gun).ToList();
-                for (int i = 0; i < 30; i++)
-                {
-                    DateTime gunTarihi = AnlikZaman.AddDays(i);
+                var ZipList = hedefGunTarihleri30.Select(date => new { GunAdi = date.DayOfWeek.ToString(), Tarih = date }).ToList();
+                var ameliyatgunuliste = _statisticsService.GetAmeliyatGunListe(model1, hedefGunTarihleri30);
 
 
-                    if (gunler.Contains(gunTarihi.DayOfWeek))
-                    {
+                return Json(new { ZipList, ameliyatgunuliste });
 
-                        hedefGunIsimleri.Add(gunTarihi.DayOfWeek.ToString());
-                        hedefGunTarihleri.Add(gunTarihi);
-                    }
-                }
-
-                zipList = hedefGunIsimleri.Zip(hedefGunTarihleri, (gun, tarih) => new { GunAdi = gun, Tarih = tarih });
-                ViewBag.ZipList = zipList;
-
-
-
-                ameliyatListesiIdler = _context.Ameliyatlar.Select(x => x.Id).ToList();
-
-                List<int> ameliyatgunuliste = new List<int>();
-                foreach (var gun in hedefGunTarihleri)
-                {
-
-
-                    int count = Sonuçlar.Where(x => x.Ameliyat.Name == model1.Ameliyat_Name && x.Doktor.Name == model1.Doktor_Name && x.AmeliyatGünü == x.AmeliyatGünü && x.AmeliyatGünü == gun).Count();
-                    ameliyatgunuliste.Add(count);
-
-
-                }
-                ViewBag.ameliyatgunuliste = ameliyatgunuliste;
-
-
-
-
-                ameliyatListesi = _context.Ameliyatlar.Select(x => x.Name).ToList();
-                ViewBag.ameliyatListesi = ameliyatListesi;
-                doktorListesi = _context.Doktorlar.Select(x => x.Name).ToList();
-                ViewBag.doktorListesi = doktorListesi;
-                AnesteziListesi = _context.Anesteziler.Select(x => x.Name).ToList();
-                ViewBag.AnesteziListesi = AnesteziListesi;
             }
 
 
 
-                            /////////////////////////////// Model2
-                            /////////////////////////////// Model2
-                            /////////////////////////////// Model2
+            /////////////////////////////// Model2
+
 
 
 
 
             if (model2.Anestezi_Name != null)
             {
-                Sonuçlar = _context.Zamanlar.Include(x => x.Ameliyat).Include(x => x.Doktor).Include(x => x.Anestezi).ToList();
+                var hedefGunTarihleri30 = _statisticsService.GetHedefGunTarihleri(gunler, Baslangiczaman, 360);
+
+                var ZipList = hedefGunTarihleri30.Select(date => new { GunAdi = date.DayOfWeek.ToString(), Tarih = date }).ToList();
+                var ameliyatgunuliste = _statisticsService.GetDoktorAnesteziGunListe(model2, hedefGunTarihleri30);
 
 
-                Baslangiczaman = DateTime.Today;
-                AnlikZaman = DateTime.Today;
-                hedefGunIsimleri = new List<string>();
-                hedefGunTarihleri = new List<DateTime>();
+                return Json(new { ZipList, ameliyatgunuliste });
 
-                gunler = _context.AmeliyatGunleri.Select(x => x.Gun).ToList();
-                for (int i = 0; i < 30; i++)
-                {
-                    DateTime gunTarihi = AnlikZaman.AddDays(i);
-
-
-                    if (gunler.Contains(gunTarihi.DayOfWeek))
-                    {
-
-                        hedefGunIsimleri.Add(gunTarihi.DayOfWeek.ToString());
-                        hedefGunTarihleri.Add(gunTarihi);
-                    }
-                }
-
-                zipList = hedefGunIsimleri.Zip(hedefGunTarihleri, (gun, tarih) => new { GunAdi = gun, Tarih = tarih });
-                ViewBag.ZipList = zipList;
-
-
-
-
-
-
-
-
-                List<int> ameliyatgunuliste = new List<int>();
-                foreach (var gun in hedefGunTarihleri)
-                {
-
-
-                    int count = Sonuçlar.Where(x => x.Anestezi.Name == model2.Anestezi_Name && x.Doktor.Name == model2.Doktor_Name && x.AmeliyatGünü == x.AmeliyatGünü && x.AmeliyatGünü == gun).Count();
-                    ameliyatgunuliste.Add(count);
-
-
-                }
-                ViewBag.ameliyatgunuliste = ameliyatgunuliste;
-
-
-
-
-                ameliyatListesi = _context.Ameliyatlar.Select(x => x.Name).ToList();
-                ViewBag.ameliyatListesi = ameliyatListesi;
-                doktorListesi = _context.Doktorlar.Select(x => x.Name).ToList();
-                ViewBag.doktorListesi = doktorListesi;
-                AnesteziListesi = _context.Anesteziler.Select(x => x.Name).ToList();
-                ViewBag.AnesteziListesi = AnesteziListesi;
             }
 
 
 
 
-                            /////////////////////////////// Model3
-                            /////////////////////////////// Model3
-                            /////////////////////////////// Model3
-                            
+            /////////////////////////////// Model3
+
+
 
 
             if (model3.Hasta_Name != null)
             {
-                Sonuçlar = _context.Zamanlar.Include(x => x.Ameliyat).Include(x => x.Doktor).ToList();
-
-
-                var hastatarih = Sonuçlar.Where(x => x.Name == model3.Hasta_Name).Select(x => x.AmeliyatGünü).ToList();
-
-
-
-
-                ViewBag.hastatarih = hastatarih;
-
-
-
-
-                ameliyatListesi = _context.Ameliyatlar.Select(x => x.Name).ToList();
-                ViewBag.ameliyatListesi = ameliyatListesi;
-                doktorListesi = _context.Doktorlar.Select(x => x.Name).ToList();
-                ViewBag.doktorListesi = doktorListesi;
-                AnesteziListesi = _context.Anesteziler.Select(x => x.Name).ToList();
-                ViewBag.AnesteziListesi = AnesteziListesi;
+                ViewBag.hastatarih = _statisticsService.GetHastaTarih(model3);
             }
 
 
-            var DoktorListesi2 = _context.Doktorlar.Select(x => x.Name).ToList();
-            ViewBag.DoktorListesi2 = new SelectList(DoktorListesi2);
+            ViewBag.DoktorListesi2 = new SelectList(_statisticsService.GetDoktorList());
+            ViewBag.AnesteziListesi2 = new SelectList(_statisticsService.GetAnesteziList());
+            ViewBag.AmeliyatListesi2 = new SelectList(_statisticsService.GetAmeliyatList());
 
-            var AnesteziListesi2 = _context.Anesteziler.Select(x => x.Name).ToList();
-            ViewBag.AnesteziListesi2 = new SelectList(AnesteziListesi2);
-
-            var AmeliyatListesi2 = _context.Ameliyatlar.Select(x => x.Name).ToList();
-            ViewBag.AmeliyatListesi2 = new SelectList(AmeliyatListesi2);
 
             var model = new IstatistikViewModel()
             {
@@ -336,9 +160,6 @@ namespace AmeliyatDefteri.Controllers
         public IActionResult Gecmis(string anestezi)
         {
             var anestezidate = DateTime.ParseExact(anestezi, "dd.MM.yyyy HH:mm", null);
-
-
-
             var gecmisler = _context.Gecmisler.Where(x => x.AmeliyatGünü == anestezidate).ToList();
 
 
@@ -346,7 +167,85 @@ namespace AmeliyatDefteri.Controllers
         }
 
 
+        public IActionResult CreateModal(DateTime Azaman)
+        {
+            ViewBag.ameliyatListesi = _statisticsService.GetAmeliyatList();
+            ViewBag.doktorListesi = _statisticsService.GetDoktorList();
+            ViewBag.AnesteziListesi = _statisticsService.GetAnesteziList();
 
+            var DuyuruListesi2 = _context.Duyurular.ToList();
+            ViewBag.DuyuruListesi2 = DuyuruListesi2;
+
+            Console.WriteLine("---------------------->" + Azaman);
+            var GunlukAmeliyatlar = _context.Zamanlar.Where(x => x.AmeliyatGünü == Azaman).Include(x => x.Ameliyat).Include(x => x.Doktor).Include(x => x.Anestezi).ToList();
+            ViewBag.GunlukAmeliyatlar = GunlukAmeliyatlar;
+
+
+            return PartialView("_ModalView");
+        }
+
+        [HttpPost]
+        public IActionResult CreateModal(AmeliyatCreateViewModel model)
+        {
+            // todo db operations etc...
+
+            Console.WriteLine("Kullanici" + model.Kullanici);
+            Console.WriteLine("Hasta_Name" + model.Hasta_Name);
+            Console.WriteLine("Telefon" + model.Telefon);
+            Console.WriteLine("Detay" + model.Detay);
+            Console.WriteLine("Anestezi_Name" + model.Anestezi_Name);
+            Console.WriteLine("Doktor_Name" + model.Doktor_Name);
+            Console.WriteLine("Ameliyat_Name" + model.Ameliyat_Name);
+
+
+            if (!ModelState.IsValid)
+            {
+
+                return RedirectToAction("Index", "Ameliyat");
+            }
+
+            var doktor = _context.Doktorlar.FirstOrDefault(x => x.Name == model.Doktor_Name);
+            var ameliyat = _context.Ameliyatlar.FirstOrDefault(x => x.Name == model.Ameliyat_Name);
+            var anestezi = _context.Anesteziler.FirstOrDefault(x => x.Name == model.Anestezi_Name);
+
+
+
+
+
+
+
+
+            Zaman zaman = new Zaman
+            {
+                Name = model.Hasta_Name,
+                Telefon = model.Telefon,
+                Detay = model.Detay,
+                AmeliyatGünü = model.AmeliyatGünü,
+                AmeliyatId = ameliyat.Id,
+                DoktorId = doktor.Id,
+                AnesteziId = anestezi.Id
+            };
+            _context.Zamanlar.Add(zaman);
+            _context.SaveChanges();
+
+            Gecmis gecmis = new Gecmis
+            {
+                Kullanici = model.Kullanici,
+                IslemTarihi = DateTime.Now,
+                Olay = "Yeni Oluşturma",
+                Name = model.Hasta_Name,
+                Telefon = model.Telefon,
+                Detay = model.Detay,
+                AmeliyatGünü = model.AmeliyatGünü,
+                Ameliyat = ameliyat.Name,
+                Doktor = doktor.Name,
+                Anestezi = anestezi.Name
+            };
+            _context.Gecmisler.Add(gecmis);
+            _context.SaveChanges();
+
+            return Json(" kaydı eklendi !");
+        }
 
 
         [HttpGet]
@@ -400,180 +299,6 @@ namespace AmeliyatDefteri.Controllers
             _context.Duyurular.Remove(duyuru);
             _context.SaveChanges();
             return RedirectToAction("Duyuru", "Ameliyat");
-        }
-
-
-
-
-
-
-
-
-
-
-        [HttpGet]
-        public IActionResult Istatistik(IstatistikDokAmeliyatViewModel model1, IstatistikDokAnesteziViewModel model2, IstatistikHastaViewModel model3)
-        {
-            ViewBag.ameliyatListesi = _context.Ameliyatlar.Select(x => x.Name).ToList();
-
-            if (model1.Ameliyat_Name != null)
-            {
-                var Sonuçlar = _context.Zamanlar.Include(x => x.Ameliyat).Include(x => x.Doktor).ToList();
-
-
-                var Baslangiczaman = DateTime.Today;
-                var AnlikZaman = DateTime.Today;
-                List<string> hedefGunIsimleri = new List<string>();
-                List<DateTime> hedefGunTarihleri = new List<DateTime>();
-
-                var gunler = _context.AmeliyatGunleri.Select(x => x.Gun).ToList();
-                for (int i = 0; i < 30; i++)
-                {
-                    DateTime gunTarihi = AnlikZaman.AddDays(i);
-
-
-                    if (gunler.Contains(gunTarihi.DayOfWeek))
-                    {
-
-                        hedefGunIsimleri.Add(gunTarihi.DayOfWeek.ToString());
-                        hedefGunTarihleri.Add(gunTarihi);
-                    }
-                }
-
-                var zipList = hedefGunIsimleri.Zip(hedefGunTarihleri, (gun, tarih) => new { GunAdi = gun, Tarih = tarih });
-                ViewBag.ZipList = zipList;
-
-
-
-                var ameliyatListesiIdler = _context.Ameliyatlar.Select(x => x.Id).ToList();
-
-                List<int> ameliyatgunuliste = new List<int>();
-                foreach (var gun in hedefGunTarihleri)
-                {
-
-
-                    int count = Sonuçlar.Where(x => x.Ameliyat.Name == model1.Ameliyat_Name && x.Doktor.Name == model1.Doktor_Name && x.AmeliyatGünü == x.AmeliyatGünü && x.AmeliyatGünü == gun).Count();
-                    ameliyatgunuliste.Add(count);
-
-
-                }
-                ViewBag.ameliyatgunuliste = ameliyatgunuliste;
-
-
-
-
-                var ameliyatListesi = _context.Ameliyatlar.Select(x => x.Name).ToList();
-                ViewBag.ameliyatListesi = ameliyatListesi;
-                var doktorListesi = _context.Doktorlar.Select(x => x.Name).ToList();
-                ViewBag.doktorListesi = doktorListesi;
-                var AnesteziListesi = _context.Anesteziler.Select(x => x.Name).ToList();
-                ViewBag.AnesteziListesi = AnesteziListesi;
-            }
-
-
-
-            if (model2.Anestezi_Name != null)
-            {
-                var Sonuçlar = _context.Zamanlar.Include(x => x.Ameliyat).Include(x => x.Doktor).ToList();
-
-
-                var Baslangiczaman = DateTime.Today;
-                var AnlikZaman = DateTime.Today;
-                List<string> hedefGunIsimleri = new List<string>();
-                List<DateTime> hedefGunTarihleri = new List<DateTime>();
-
-                var gunler = _context.AmeliyatGunleri.Select(x => x.Gun).ToList();
-                for (int i = 0; i < 30; i++)
-                {
-                    DateTime gunTarihi = AnlikZaman.AddDays(i);
-
-
-                    if (gunler.Contains(gunTarihi.DayOfWeek))
-                    {
-
-                        hedefGunIsimleri.Add(gunTarihi.DayOfWeek.ToString());
-                        hedefGunTarihleri.Add(gunTarihi);
-                    }
-                }
-
-                var zipList = hedefGunIsimleri.Zip(hedefGunTarihleri, (gun, tarih) => new { GunAdi = gun, Tarih = tarih });
-                ViewBag.ZipList = zipList;
-
-
-
-
-
-
-
-
-                List<int> ameliyatgunuliste = new List<int>();
-                foreach (var gun in hedefGunTarihleri)
-                {
-
-
-                    int count = Sonuçlar.Where(x => x.Ameliyat.Name == model2.Anestezi_Name && x.Doktor.Name == model2.Doktor_Name && x.AmeliyatGünü == x.AmeliyatGünü && x.AmeliyatGünü == gun).Count();
-                    ameliyatgunuliste.Add(count);
-
-
-                }
-                ViewBag.ameliyatgunuliste = ameliyatgunuliste;
-
-
-
-
-                var ameliyatListesi = _context.Ameliyatlar.Select(x => x.Name).ToList();
-                ViewBag.ameliyatListesi = ameliyatListesi;
-                var doktorListesi = _context.Doktorlar.Select(x => x.Name).ToList();
-                ViewBag.doktorListesi = doktorListesi;
-                var AnesteziListesi = _context.Anesteziler.Select(x => x.Name).ToList();
-                ViewBag.AnesteziListesi = AnesteziListesi;
-            }
-
-
-
-
-
-
-            if (model3.Hasta_Name != null)
-            {
-                var Sonuçlar = _context.Zamanlar.Include(x => x.Ameliyat).Include(x => x.Doktor).ToList();
-
-
-                var hastatarih = Sonuçlar.Where(x => x.Name == model3.Hasta_Name).Select(x => x.AmeliyatGünü).ToList();
-
-
-
-
-                ViewBag.hastatarih = hastatarih;
-
-
-
-
-                var ameliyatListesi = _context.Ameliyatlar.Select(x => x.Name).ToList();
-                ViewBag.ameliyatListesi = ameliyatListesi;
-                var doktorListesi = _context.Doktorlar.Select(x => x.Name).ToList();
-                ViewBag.doktorListesi = doktorListesi;
-                var AnesteziListesi = _context.Anesteziler.Select(x => x.Name).ToList();
-                ViewBag.AnesteziListesi = AnesteziListesi;
-            }
-
-
-            var DoktorListesi2 = _context.Doktorlar.Select(x => x.Name).ToList();
-            ViewBag.DoktorListesi2 = new SelectList(DoktorListesi2);
-
-            var AnesteziListesi2 = _context.Anesteziler.Select(x => x.Name).ToList();
-            ViewBag.AnesteziListesi2 = new SelectList(AnesteziListesi2);
-
-            var AmeliyatListesi2 = _context.Ameliyatlar.Select(x => x.Name).ToList();
-            ViewBag.AmeliyatListesi2 = new SelectList(AmeliyatListesi2);
-
-            var model = new IstatistikViewModel()
-            {
-                IstatistikDokAmeliyatViewModel = model1,
-                IstatistikDokAnesteziViewModel = model2,
-                IstatistikHastaViewModel = model3,
-            };
-            return View(model);
         }
 
 
@@ -938,12 +663,7 @@ namespace AmeliyatDefteri.Controllers
 
             var GunListesi = _context.AmeliyatGunleri.Select(x => x.GunTurkce).ToList();
             ViewBag.GunListesi = new SelectList(GunListesi);
-            /*
-                        var Pazartesi = DayOfWeek.Monday;
-                        var Salı = DayOfWeek.Tuesday;
-                        var Çarşamba = DayOfWeek.Wednesday;
-                        var Perşembe = DayOfWeek.Thursday;
-                        var Cuma = DayOfWeek.Friday;*/
+
             List<string> ToplamGunlerTurkce = new()
             {
                 "Pazartesi",
@@ -961,15 +681,7 @@ namespace AmeliyatDefteri.Controllers
                 }
             }
             ViewBag.ToplamGunlerTurkce = new SelectList(ToplamGunlerTurkce);
-            /*List<DayOfWeek> ToplamGunler = new List<DayOfWeek>();
 
-            ToplamGunler.Add(DayOfWeek.Monday);
-            ToplamGunler.Add(DayOfWeek.Tuesday);
-            ToplamGunler.Add(DayOfWeek.Wednesday);
-            ToplamGunler.Add(DayOfWeek.Thursday);
-            ToplamGunler.Add(DayOfWeek.Friday);
-
-            ///ViewBag.GunListesi = new SelectList(GunListesi);*/
             return View();
         }
 

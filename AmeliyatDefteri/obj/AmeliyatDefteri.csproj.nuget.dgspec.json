@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\MK\\VSCode asp.net\\Abim Proje Mvc - Kopya\\AmeliyatDefteri\\AmeliyatDefteri.csproj": {}
+    "D:\\MK\\VSCode asp.net\\js deneme\\Ameliyat deftei Core - Kopya\\Hospital Surgery Registration System\\AmeliyatDefteri\\AmeliyatDefteri.csproj": {}
   },
   "projects": {
-    "D:\\MK\\VSCode asp.net\\Abim Proje Mvc - Kopya\\AmeliyatDefteri\\AmeliyatDefteri.csproj": {
+    "D:\\MK\\VSCode asp.net\\js deneme\\Ameliyat deftei Core - Kopya\\Hospital Surgery Registration System\\AmeliyatDefteri\\AmeliyatDefteri.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\MK\\VSCode asp.net\\Abim Proje Mvc - Kopya\\AmeliyatDefteri\\AmeliyatDefteri.csproj",
+        "projectUniqueName": "D:\\MK\\VSCode asp.net\\js deneme\\Ameliyat deftei Core - Kopya\\Hospital Surgery Registration System\\AmeliyatDefteri\\AmeliyatDefteri.csproj",
         "projectName": "AmeliyatDefteri",
-        "projectPath": "D:\\MK\\VSCode asp.net\\Abim Proje Mvc - Kopya\\AmeliyatDefteri\\AmeliyatDefteri.csproj",
+        "projectPath": "D:\\MK\\VSCode asp.net\\js deneme\\Ameliyat deftei Core - Kopya\\Hospital Surgery Registration System\\AmeliyatDefteri\\AmeliyatDefteri.csproj",
         "packagesPath": "C:\\Users\\Mkoc\\.nuget\\packages\\",
-        "outputPath": "D:\\MK\\VSCode asp.net\\Abim Proje Mvc - Kopya\\AmeliyatDefteri\\obj\\",
+        "outputPath": "D:\\MK\\VSCode asp.net\\js deneme\\Ameliyat deftei Core - Kopya\\Hospital Surgery Registration System\\AmeliyatDefteri\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Mkoc\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -49,6 +49,10 @@
             "Microsoft.EntityFrameworkCore.Sqlite": {
               "target": "Package",
               "version": "[7.0.8, )"
+            },
+            "QuestPDF": {
+              "target": "Package",
+              "version": "[2024.6.4, )"
             }
           },
           "imports": [
@@ -62,6 +66,24 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[7.0.14, 7.0.14]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Host.win-x64",
+              "version": "[7.0.14, 7.0.14]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[7.0.14, 7.0.14]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Ref",
+              "version": "[7.0.14, 7.0.14]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.AspNetCore.App": {
               "privateAssets": "none"
@@ -70,7 +92,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.403\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.100\\RuntimeIdentifierGraph.json"
         }
       }
     }
